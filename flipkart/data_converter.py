@@ -1,33 +1,35 @@
 import pandas as pd
-from langchain core.documents import Document # type: ignore
+from langchain.schema import Document  # Corrected import for Document
 
 def dataconverter():
-    product_data = pd.read_csv("data\\flipkart_product_review.csv")
+    # Read the product data from the CSV file
+    product_data = pd.read_csv("data/flipkart_product_review.csv")
+    
+    # Extract relevant columns
+    data = product_data[["product_title", "review"]]
+    
+    # Initialize a list to store product data
+    product_list = []
 
-    data = product_data[["product_title","review"]]
+    # Iterate over the rows of the DataFrame
+    for index, row in data.iterrows():
+        product = {
+            "product_name": row["product_title"],
+            "review": row["review"]
+        }
+        # Append the product object to the list
+        product_list.append(product)
 
-    product_list =[]
+    # Initialize a list to store documents
+    docs = []
 
+    # Convert each product object into a Document
+    for product in product_list:
+        metadata = {"product_name": product["product_name"]}
+        page_content = product["review"]
 
-## Itrate over the rows of the DataFrame
+        # Create a Document and append it to the list
+        doc = Document(page_content=page_content, metadata=metadata)
+        docs.append(doc)
 
-for index, row in data.iterrows(): # type: ignore
-  object = {
-      "product_name": row["product_title"],
-      "review": row["review"]
-  }
-
-  ## Append the object to the product list
-
-  product_list.append(object)
-
-  docs = []
-
-for object in product_list:
-  metadata = {"product_name": object["product_name"]}
-  page_content = object["review"]
-
-  doc = Document(page_content= page_content, metadata= metadata)
-
-  docs.append(doc) 
-return docs
+    return docs
